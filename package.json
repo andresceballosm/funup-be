@@ -12,6 +12,9 @@
     "lint": "eslint . --ext .js,.ts",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": "16.5.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
