@@ -1,5 +1,15 @@
-import { model, Schema } from "mongoose";
-
+import { model, Schema, Document} from 'mongoose';
+export interface UserInput {
+    name: string;
+    email: string;
+    photo: string;
+    active: string;
+    firebaseUid: string;
+  }
+  export interface UserDocument extends UserInput, Document {
+    createdAt: Date;
+    updatedAt: Date;
+  }
 
 const userSchema = new Schema({
     name: {
@@ -11,22 +21,15 @@ const userSchema = new Schema({
         required: [ true, 'Missing email'],
         unique: true
     },
-    password: {
-        type: String,
-        required: [true, 'Missing password']
-    },
     active: {
         type: Boolean,
         default: true
     },
-    google: {
-        type: Boolean,
-        default: false
+    firebaseUid: {
+        type: String,
+        required: [true, 'Missing firebase uid']
     },
-    facebook: {
-        type: Boolean,
-        default: false
-    }
-});
+    photo: String,
+}, { timestamps: true });
 
-export const userModel = model('User', userSchema);
+export const userModel = model<UserDocument>('User', userSchema);

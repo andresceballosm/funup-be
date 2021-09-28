@@ -1,9 +1,10 @@
 import queries from './queries'
+import mutations from './mutations';
 
 const resolvers: any = {
-  // Mutation:{
-  //   ...mutations
-  // },
+  Mutation:{
+    ...mutations
+  },
   Query:{
    ...queries
   }
