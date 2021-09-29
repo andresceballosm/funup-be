@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
+import { connectDB, disconnectDB } from '../db/config';
 
 // Resolvers
 import resolvers from '../graphql/resolvers';
@@ -8,27 +9,25 @@ import typeDefs from '../graphql/schemas';
 
 //CONSTANTS
 import pathURL from '../constants/path.constants';
-import { dbConnection } from '../db/config';
 
 const path = require('path');
 
 class Server {
   private app: Application;
   private port: string;
+  private server: ApolloServer;
 
   constructor() {
+    this.setEnvVariables();
     this.app = express();
     this.port = process.env.PORT || '8000';
+    this.server = this.createApolloServer();
     //Headers
     this.headers();
     //Connection DB
-    //this.connectionDB();
+    connectDB();
     //Middlewares
     this.middlewares();
-
-    if (process.env.NODE_ENV !== 'production') {
-      require('dotenv').config();
-    }
   }
 
   headers() {
@@ -39,10 +38,6 @@ class Server {
     });
   }
 
-  async connectionDB() {
-    await dbConnection();
-  }
-
   async middlewares() {
     this.startServer();
     this.app.use(cors());
@@ -50,7 +45,6 @@ class Server {
     //Static files
     this.app.use(express.static(path.join(__dirname, 'public')));
   }
-
 
   createApolloServer () {
     const server = new ApolloServer({
@@ -61,16 +55,31 @@ class Server {
   }
 
   async startServer() {
-    const server = this.createApolloServer();
-    await server.start();
+    this.server = this.createApolloServer();
+    await this.server.start();
     const app = this.app;
-    server.applyMiddleware({ app, path: pathURL.graphql });
+    this.server.applyMiddleware({ app, path: pathURL.graphql });
+  }
+
+  async stopServer() {
+    await this.server.stop();
+    disconnectDB();
   }
 
   listen() {
     this.app.listen(this.port, () => {
       console.log('Server running on port ' + this.port);
     });
+  }
+
+  setEnvVariables() {
+    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'development') {
+      require('dotenv').config({ path: '.env.test' });
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      require('dotenv').config({ path: '.env.development' });
+    }
   }
 }
 
