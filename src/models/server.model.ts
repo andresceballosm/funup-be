@@ -77,7 +77,7 @@ class Server {
       require('dotenv').config({ path: '.env.test' });
     }
 
-    if (process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV === 'development') {
       require('dotenv').config({ path: '.env.development' });
     }
   }
