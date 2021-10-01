@@ -21,12 +21,25 @@ Then install Node.js 16.5.0 ( fully compatible with M1 macs 😄 )
 nvm install 16.5.0
 ```
 
-# Mongodb
-
-The current version is 4.4.9
+# nodemon
 
 ```
-brew install mongodb-community@4.4.9
+npm install nodemon -g
+```
+
+# Mongodb
+
+The current version is 4.4
+
+```
+brew tap mongodb/brew
+brew install mongodb-community@4.4
+```
+
+in case of M1 macs
+
+```
+arch -arm64 brew install mongodb-community@4.4
 ```
 
 # Run the project
