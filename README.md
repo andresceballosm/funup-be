@@ -15,7 +15,7 @@ brew install nvm
 source $(brew --prefix nvm)/nvm.sh
 ```
 
-Then install Node.js 16.5.0 ( fully compatible with M1 macs 😄
+Then install Node.js 16.5.0 ( fully compatible with M1 macs 😄 )
 
 ```
 nvm install 16.5.0
