@@ -58,6 +58,7 @@ class Server {
     this.server = this.createApolloServer();
     await this.server.start();
     const app = this.app;
+    this.app.get(pathURL.health, (_, res:any) => res.status(200).json({ status: 'success' }));
     this.server.applyMiddleware({ app, path: pathURL.graphql });
   }
 
