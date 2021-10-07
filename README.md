@@ -55,3 +55,14 @@ Then run the project
 ```
 npm run start:dev
 ```
+
+# Health check
+
+To be able to check if the app is running do a `GET` request to `/health`.
+Then you should get a response like this:
+
+```JSON
+{
+    "status": "success"
+}
+```
