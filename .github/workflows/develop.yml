@@ -1,0 +1,55 @@
+on:
+  push:
+    branches: [develop,cicd-dev]
+
+name: Deploy to Amazon ECS Development environment
+
+concurrency: deploy_backend_dev
+
+jobs:
+  deploy:
+    name: Deploy-Develop
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: fanalyst-dev
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY --all-tags
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+    - name: Update the service and create a new deployment with the latest task definition version
+      env:
+        ECS_CLUSTER: fanalyst-dev
+        ECS_SERVICE: fanalyst-dev-service
+        ECS_TASK_DEFINITION: fanalyst-dev
+      run: aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $ECS_TASK_DEFINITION --force-new-deployment
+
+    - name: Notification
+      uses: 8398a7/action-slack@v3
+      with:
+        job_name: Deploy-Develop
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always()
