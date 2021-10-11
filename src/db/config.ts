@@ -15,7 +15,8 @@ export const connectDB = () => {
 };
 
 const generateDbUrl = () => {
-  let DB: string = process.env.MONGODB_CNN;
+  let DB: string;
+  DB = process.env.MONGODB_CNN || '';
 
   if (process.platform !== 'darwin') {
     if (process.env.MONGODB_CNN) {
