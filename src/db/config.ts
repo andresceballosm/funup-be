@@ -16,7 +16,7 @@ export const connectDB = () => {
         });
     } else {
       mongoose
-        .connect(`mongodb://${process.env.MONGODB_HOST}`, {
+        .connect(`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`, {
           auth: {
             username: process.env.MONGODB_USER,
             password: process.env.MONGODB_PASSWORD,
