@@ -5,9 +5,11 @@ declare global {
       NODE_ENV: 'dev' | 'production' | 'local' | 'qa';
       PORT?: string;
       PWD: string;
-      MONGODB_CONNECTION: string;
       MONGODB_USER: string;
       MONGODB_PASSWORD: string;
+      MONGODB_HOST: string;
+      MONGODB_PORT: string;
+      MONGODB_DB: string;
     }
   }
 }

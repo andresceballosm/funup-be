@@ -2,36 +2,37 @@ import mongoose from 'mongoose';
 
 export const connectDB = () => {
   return new Promise<void>((resolve, _) => {
-    mongoose
-      .connect(generateDbUrl())
-      .then(() => {
-        console.log(`Connected to MongoDb in ${process.env.NODE_ENV} environment...`);
-        resolve();
-      })
-      .catch((err) => {
-        throw new Error(`Error initializing databse ${err}`);
-      });
-  });
-};
-
-const generateDbUrl = () => {
-  let DB: string;
-  DB = process.env.MONGODB_CONNECTION || '';
-
-  if (process.platform !== 'darwin') {
-    if (process.env.MONGODB_CONNECTION) {
-      DB = DB.replace('<PASSWORD>', process.env.MONGODB_PASSWORD || '');
-      DB = DB.replace('<USER>', process.env.MONGODB_USER || '');
+    if (process.env.NODE_ENV === 'local') {
+      mongoose
+        .connect(
+          `mongodb://${process.env.MONGODB_HOST}:${process.env.PORT}/${process.env.MONGODB_DB}`
+        )
+        .then(() => {
+          console.log(`Connected to MongoDb in ${process.env.NODE_ENV} environment...`);
+          resolve();
+        })
+        .catch((err) => {
+          throw new Error(`Error initializing databse ${err}`);
+        });
     } else {
-      throw new Error('Database ENV vars are not set!');
+      mongoose
+        .connect(`mongodb://${process.env.MONGODB_HOST}`, {
+          auth: {
+            username: process.env.MONGODB_USER,
+            password: process.env.MONGODB_PASSWORD,
+          },
+          authSource: 'admin',
+          dbName: process.env.MONGODB_DB,
+        })
+        .then(() => {
+          console.log(`Connected to MongoDb in ${process.env.NODE_ENV} environment...`);
+          resolve();
+        })
+        .catch((err) => {
+          throw new Error(`Error initializing databse ${err}`);
+        });
     }
-  } else {
-    DB = 'mongodb://localhost:27017/fanalyst_development';
-  }
-
-  console.log('DB Url:', DB);
-
-  return DB;
+  });
 };
 
 export const disconnectDB = () => mongoose.disconnect();
