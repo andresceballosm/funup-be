@@ -46,7 +46,7 @@ class Server {
     this.app.use(express.static(path.join(__dirname, 'public')));
   }
 
-  createApolloServer () {
+  createApolloServer() {
     const server = new ApolloServer({
       typeDefs,
       resolvers,
@@ -58,7 +58,7 @@ class Server {
     this.server = this.createApolloServer();
     await this.server.start();
     const app = this.app;
-    this.app.get(pathURL.health, (_, res:any) => res.status(200).json({ status: 'success' }));
+    this.app.get(pathURL.health, (_, res: any) => res.status(200).json({ status: 'success' }));
     this.server.applyMiddleware({ app, path: pathURL.graphql });
   }
 
@@ -74,12 +74,21 @@ class Server {
   }
 
   setEnvVariables() {
-    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'development') {
-      require('dotenv').config({ path: '.env.test' });
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      require('dotenv').config({ path: '.env.development' });
+    switch (process.env.NODE_ENV) {
+      case 'dev': {
+        require('dotenv').config({ path: '.env.dev' });
+        break;
+      }
+      case 'qa': {
+        require('dotenv').config({ path: '.env.qa' });
+        break;
+      }
+      case 'local': {
+        require('dotenv').config({ path: '.env.local' });
+        break;
+      }
+      default:
+        require('dotenv').config({ path: '.env.local' });
     }
   }
 }
