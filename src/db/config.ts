@@ -16,10 +16,10 @@ export const connectDB = () => {
 
 const generateDbUrl = () => {
   let DB: string;
-  DB = process.env.MONGODB_CNN || '';
+  DB = process.env.MONGODB_CONNECTION || '';
 
   if (process.platform !== 'darwin') {
-    if (process.env.MONGODB_CNN) {
+    if (process.env.MONGODB_CONNECTION) {
       DB = DB.replace('<PASSWORD>', process.env.MONGODB_PASSWORD || '');
       DB = DB.replace('<USER>', process.env.MONGODB_USER || '');
     } else {
