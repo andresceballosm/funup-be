@@ -29,6 +29,8 @@ const generateDbUrl = () => {
     DB = 'mongodb://localhost:27017/fanalyst_development';
   }
 
+  console.log('DB Url:', DB);
+
   return DB;
 };
 
