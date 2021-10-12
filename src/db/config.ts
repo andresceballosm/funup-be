@@ -24,7 +24,6 @@ export const connectDB = () => {
         authSource: 'admin',
         dbName: process.env.MONGODB_DB,
       };
-      console.log('Connecting to...', conn, connOptions);
       mongoose
         .connect(conn, connOptions)
         .then(() => {
