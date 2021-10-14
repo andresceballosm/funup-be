@@ -9,7 +9,7 @@ export const userSchema = gql`
     user(id: String!) : User
   }
   type Mutation {
-    signup(name: String!, email: String!, firebaseUid: String!,
+    signup(name: String, email: String!, firebaseUid: String!,
       googleToken: String, facebookToken: String,
       twitterToken: String, photo: String) : User
   }
