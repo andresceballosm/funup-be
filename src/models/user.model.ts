@@ -12,10 +12,7 @@ export interface UserInput {
   }
 
 const userSchema = new Schema({
-    name: {
-        type: String,
-        required: [ true, 'Missing name']
-    },
+    name: String,
     email: {
         type: String,
         required: [ true, 'Missing email'],
