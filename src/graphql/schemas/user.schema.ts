@@ -7,15 +7,12 @@ export const userSchema = gql`
     bio: String
   }
 
-  type Query {
-    user(id: String!) : User
+  extend type Query {
+    user(id: String!): User
   }
 
-  type Mutation {
-    signup(name: String, email: String!, firebaseUid: String!, photo: String) : User
-  }
-
-  type Mutation {
-    updateProfile(id: String!, name: String, email: String, bio:String, photo: String) : User
+  extend type Mutation {
+    signup(name: String, email: String!, firebaseUid: String!, photo: String): User
+    updateProfile(id: String!, name: String, email: String, bio: String, photo: String): User
   }
 `;
