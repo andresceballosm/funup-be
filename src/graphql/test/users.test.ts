@@ -105,4 +105,51 @@ describe('Users graphql', () => {
       });
     });
   });
+
+  describe('updateProfile', () => {
+    describe('when an invalid object is given', () => {
+      it('returns a validation error', async () => {
+        const UPDATE_PROFILE = `
+        mutation {
+            updateProfile(randomName: "${user.name}") {
+              name
+            }
+        }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_PROFILE,
+          variables: { randomName: user.name }
+        });
+
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message)
+          .toEqual('Unknown argument "randomName" on field "Mutation.updateProfile".');
+      });
+    });
+
+    describe('when a valid object is given', () => {
+      it('updates the existing user', async () => {
+        const newUser = await userModel.create(user);
+        const UPDATE_PROFILE = `
+        mutation {
+            updateProfile(id: "${newUser.id}", bio: "Welcome to my profile") {
+              name
+              email
+              bio
+            }
+        }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_PROFILE,
+          variables: { bio: 'Welcome to my profile' }
+        });
+
+        const expectedUser = { name: user.name, email: user.email, bio: 'Welcome to my profile' };
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
+      });
+    });
+  });
 });

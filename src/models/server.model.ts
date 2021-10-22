@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import { connectDB, disconnectDB } from '../db/config';
+import * as admin from 'firebase-admin';
 
 // Resolvers
 import resolvers from '../graphql/resolvers';
@@ -19,6 +20,8 @@ class Server {
 
   constructor() {
     this.setEnvVariables();
+    //Initialize Firebase before usage
+    this.startFirebase();
     this.app = express();
     this.port = process.env.PORT || '8000';
     this.server = this.createApolloServer();
@@ -71,6 +74,18 @@ class Server {
     this.app.listen(this.port, () => {
       console.log('Server running on port ' + this.port);
     });
+  }
+
+  startFirebase() {
+    if (process.env.NODE_ENV !== 'test') {
+      const serviceAccount = {
+        credential: admin.credential.applicationDefault(),
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientId: process.env.FIREBASE_CLIENT_ID,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY
+      }
+      admin.initializeApp(serviceAccount);
+    }
   }
 
   setEnvVariables() {

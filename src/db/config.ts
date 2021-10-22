@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export const connectDB = () => {
   return new Promise<void>((resolve, _) => {
-    if (process.env.NODE_ENV === 'local') {
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'test') {
       const conn = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DB}`;
       console.log('Connecting to...', conn);
       mongoose
