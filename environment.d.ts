@@ -2,7 +2,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       GITHUB_AUTH_TOKEN: string;
-      NODE_ENV: 'dev' | 'production' | 'local' | 'qa';
+      NODE_ENV: 'dev' | 'production' | 'local' | 'qa' | 'test';
       PORT?: string;
       PWD: string;
       MONGODB_USER: string;

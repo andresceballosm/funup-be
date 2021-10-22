@@ -1,8 +1,9 @@
-import { model, Schema, Document} from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 export interface UserInput {
     name: string;
     email: string;
     photo: string;
+    bio: string;
     active: string;
     firebaseUid: string;
   }
@@ -26,6 +27,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Missing firebase uid']
     },
+    bio: String,
     photo: String,
 }, { timestamps: true });
 
