@@ -1,11 +1,11 @@
 import Server from '../../models/server.model';
 import { userModel } from '../../models/user.model';
-import { user } from './factories/users';
+import { onboardingMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
 
 describe('Users graphql', () => {
-  let server:Server;
-  let apolloServer:ApolloServer;
+  let server: Server;
+  let apolloServer: ApolloServer;
 
   beforeAll(() => {
     server = new Server();
@@ -31,10 +31,12 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: GET_USER,
-          variables: { id: 1 }
+          variables: { id: 1 },
         });
 
-        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual('1 is not a valid user ID');
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          '1 is not a valid user ID'
+        );
         expect(JSON.stringify(result.data?.users)).toBeUndefined();
       });
     });
@@ -52,7 +54,7 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: GET_USER,
-          variables: { id: 1 }
+          variables: { id: 1 },
         });
 
         expect(result.errors).toBeUndefined();
@@ -74,11 +76,12 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: CREATE_USER,
-          variables: { name: user.name }
+          variables: { name: user.name },
         });
 
-        expect(JSON.parse(JSON.stringify(result.errors))[0].message)
-          .toEqual('Field "signup" argument "email" of type "String!" is required, but it was not provided.');
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Field "signup" argument "email" of type "String!" is required, but it was not provided.'
+        );
       });
     });
 
@@ -95,7 +98,7 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: CREATE_USER,
-          variables: user
+          variables: user,
         });
 
         const expectedUser = { name: user.name, email: user.email };
@@ -119,11 +122,12 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: UPDATE_PROFILE,
-          variables: { randomName: user.name }
+          variables: { randomName: user.name },
         });
 
-        expect(JSON.parse(JSON.stringify(result.errors))[0].message)
-          .toEqual('Unknown argument "randomName" on field "Mutation.updateProfile".');
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Unknown argument "randomName" on field "Mutation.updateProfile".'
+        );
       });
     });
 
@@ -142,13 +146,88 @@ describe('Users graphql', () => {
 
         const result = await apolloServer.executeOperation({
           query: UPDATE_PROFILE,
-          variables: { bio: 'Welcome to my profile' }
+          variables: { bio: 'Welcome to my profile' },
         });
 
         const expectedUser = { name: user.name, email: user.email, bio: 'Welcome to my profile' };
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
+      });
+    });
+  });
+
+  describe('onboarding', () => {
+    describe('when an invalid object is given', () => {
+      it('returns a validation error', async () => {
+        const ONBOARDING = `
+        mutation {
+            onboarding(randomName: "${user.name}") {
+              name
+            }
+        }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: ONBOARDING,
+          variables: { randomName: user.name },
+        });
+
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Unknown argument "randomName" on field "Mutation.onboarding".'
+        );
+      });
+    });
+
+    describe('when a user is created', () => {
+      it('has onboardingComplete in false', async () => {
+        const newUser = await userModel.create(user);
+        expect(newUser.onboardingCompleted).toBe(false);
+      });
+    });
+
+    describe('when a valid object is given', () => {
+      it('updates the existing user', async () => {
+        const newUser = await userModel.create(user);
+        console.log(newUser);
+        const ONBOARDING = `
+        mutation onboarding($email: String!, $feedPreferences: FeedPreferencesInput!, $teams: [TeamInput]!){
+            onboarding(email: $email, feedPreferences: $feedPreferences, teams: $teams) {
+              email
+              feedPreferences {
+                tweets
+                podcasts
+                videos
+                articles
+              }
+              teams {
+                name
+                league
+                sportRadarId
+                sportsManiaId
+              }
+              onboardingCompleted
+            }
+        }
+        `;
+
+        const expectedUser = {
+          email: newUser.email,
+          feedPreferences: onboardingMock.feedPreferences,
+          teams: onboardingMock.teams,
+        };
+
+        const result = await apolloServer.executeOperation({
+          query: ONBOARDING,
+          variables: {
+            ...expectedUser,
+          },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.onboarding)).toEqual(
+          JSON.stringify({ ...expectedUser, onboardingCompleted: true })
+        );
       });
     });
   });
