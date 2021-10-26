@@ -1,13 +1,6 @@
-import queries from './queries'
-import mutations from './mutations';
+import userResolvers from './users/index';
+import leagueResolvers from './leagues/index';
 
-const resolvers: any = {
-  Mutation:{
-    ...mutations
-  },
-  Query:{
-   ...queries
-  }
-}
+import _ from 'lodash';
 
-export default resolvers;
+export default _.merge({}, userResolvers, leagueResolvers);
