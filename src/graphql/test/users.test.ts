@@ -140,6 +140,7 @@ describe('Users graphql', () => {
               name
               email
               bio
+              onboardingCompleted
             }
         }
         `;
@@ -149,7 +150,12 @@ describe('Users graphql', () => {
           variables: { bio: 'Welcome to my profile' },
         });
 
-        const expectedUser = { name: user.name, email: user.email, bio: 'Welcome to my profile' };
+        const expectedUser = {
+          name: user.name,
+          email: user.email,
+          bio: 'Welcome to my profile',
+          onboardingCompleted: true,
+        };
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
@@ -189,7 +195,6 @@ describe('Users graphql', () => {
     describe('when a valid object is given', () => {
       it('updates the existing user', async () => {
         const newUser = await userModel.create(user);
-        console.log(newUser);
         const ONBOARDING = `
         mutation onboarding($email: String!, $feedPreferences: FeedPreferencesInput!, $teams: [TeamInput]!){
             onboarding(email: $email, feedPreferences: $feedPreferences, teams: $teams) {
@@ -226,7 +231,7 @@ describe('Users graphql', () => {
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.onboarding)).toEqual(
-          JSON.stringify({ ...expectedUser, onboardingCompleted: true })
+          JSON.stringify({ ...expectedUser, onboardingCompleted: false })
         );
       });
     });

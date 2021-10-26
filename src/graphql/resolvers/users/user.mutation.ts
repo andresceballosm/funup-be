@@ -13,14 +13,18 @@ export default {
     await userModel.create(context),
 
   updateProfile: async (_1: any, context: UserDocument, _2: any, _3: any) => {
-    return await userModel.findOneAndUpdate(context.id, context, { returnOriginal: false });
+    return await userModel.findOneAndUpdate(
+      context.id,
+      { ...context, onboardingCompleted: true },
+      { returnOriginal: false }
+    );
   },
 
   onboarding: async (_1: any, args: OnboardingInput) => {
     const { feedPreferences, teams, email } = args;
     return await userModel.findOneAndUpdate(
       { email },
-      { feedPreferences, teams, onboardingCompleted: true },
+      { feedPreferences, teams },
       { returnOriginal: false }
     );
   },
