@@ -36,6 +36,7 @@ export const userSchema = gql`
 
   extend type Query {
     user(id: String!): User
+    userByFirebaseUid(firebaseUid: String!): User
   }
 
   extend type Mutation {

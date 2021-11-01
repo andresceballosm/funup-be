@@ -63,6 +63,42 @@ describe('Users graphql', () => {
     });
   });
 
+  describe('userByFirebaseUid', () => {
+    const GET_USER_BY_FIREBASEUID = `
+        query userByFirebaseUid($firebaseUid: String!) {
+          userByFirebaseUid(firebaseUid: $firebaseUid) {
+            name
+          }
+        }
+        `;
+
+    describe('when an invalid user firebaseUid is given', () => {
+      it('it returns no error but null user data', async () => {
+        const result = await apolloServer.executeOperation({
+          query: GET_USER_BY_FIREBASEUID,
+          variables: { firebaseUid: '1' },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(result.data).toBeDefined();
+        expect(result.data?.userByFirebaseUid).toBeNull();
+      });
+    });
+
+    describe('when an valid user firebaseUid is given', () => {
+      it('returns the user object', async () => {
+        const newUser = await userModel.create(user);
+        const result = await apolloServer.executeOperation({
+          query: GET_USER_BY_FIREBASEUID,
+          variables: { firebaseUid: user.firebaseUid },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(result.data?.userByFirebaseUid.name).toEqual(newUser.name);
+      });
+    });
+  });
+
   describe('signup', () => {
     describe('when an invalid object is given', () => {
       it('returns a validation error', async () => {
