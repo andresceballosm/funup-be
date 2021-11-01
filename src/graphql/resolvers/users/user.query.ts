@@ -11,4 +11,7 @@ export default {
 
     return await userModel.findOne({ _id: context.id });
   },
+
+  userByFirebaseUid: async (_: any, context: UserDocument) =>
+    await userModel.findOne({ firebaseUid: context.firebaseUid }),
 };
