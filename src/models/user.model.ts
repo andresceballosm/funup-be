@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 import { FeedPreferences, feedPreferencesSchema } from './feed-preferences.model';
 import { SmallTeam, smallTeamSchema } from './small-team';
+import { Socials, socialsSchema } from './socials.model';
 
 export interface UserInput {
   name: string;
@@ -8,6 +9,7 @@ export interface UserInput {
   photo: string;
   bio: string;
   active: string;
+  socials: Socials;
   firebaseUid: string;
   onboardingCompleted: boolean;
   feedPreferences: FeedPreferences;
@@ -40,6 +42,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    socials: socialsSchema,
     feedPreferences: feedPreferencesSchema,
     teams: [smallTeamSchema],
   },

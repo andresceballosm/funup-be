@@ -9,6 +9,12 @@ export const user = {
   createdAt: Date.now(),
 };
 
+export const socialsMock = {
+  socials: {
+    youtube: 'https://gdata.youtube.com/feeds/api/users/UC_x5XG1OV2P6uZZ5FSM9Ttw?v=2.1'
+  }
+};
+
 export const onboardingMock = {
   feedPreferences: {
     tweets: false,

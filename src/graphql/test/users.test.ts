@@ -1,6 +1,6 @@
 import Server from '../../models/server.model';
 import { userModel } from '../../models/user.model';
-import { onboardingMock, user } from './factories/users';
+import { onboardingMock, socialsMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
 
 describe('Users graphql', () => {
@@ -159,6 +159,63 @@ describe('Users graphql', () => {
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
+      });
+    });
+  });
+
+  describe('updateSocials', () => {
+    describe('when an invalid object is given', () => {
+      it('returns a validation error', async () => {
+        const UPDATE_SOCIAL = `
+        mutation {
+            updateSocialMedia(randomName: "${user.name}") {
+              name
+            }
+        }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_SOCIAL,
+          variables: { randomName: user.name },
+        });
+
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Unknown argument "randomName" on field "Mutation.updateSocialMedia".'
+        );
+      });
+    });
+
+    describe('when a valid object is given', () => {
+      it('updates the existing user', async () => {
+        const newUser = await userModel.create(user);
+        const UPDATE_SOCIAL = `
+          mutation updateSocialMedia($id: String!, $socials: SocialsInput) {
+            updateSocialMedia(id: $id, socials: $socials) {
+              id
+              socials {
+                youtube
+              }
+            }
+          }
+        `;
+
+        const expectedUser = {
+          id: newUser.id,
+          socials: socialsMock.socials
+        };
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_SOCIAL,
+          variables: {
+            id: newUser.id,
+            socials: socialsMock.socials,
+          },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.updateSocialMedia)).toEqual(
+          JSON.stringify({ ...expectedUser })
+        );
       });
     });
   });

@@ -25,10 +25,18 @@ export const userSchema = gql`
     sportRadarId: String!
     sportsManiaId: String!
   }
+  input SocialsInput {
+    youtube: String
+  }
+  type Socials {
+    youtube: String
+  }
   type User {
+    id: String
     name: String
     email: String
     bio: String
+    socials: Socials
     onboardingCompleted: Boolean
     feedPreferences: FeedPreferences
     teams: [SmallTeam]
@@ -41,6 +49,7 @@ export const userSchema = gql`
   extend type Mutation {
     signup(name: String, email: String!, firebaseUid: String!, photo: String): User
     updateProfile(id: String!, name: String, email: String, bio: String, photo: String): User
+    updateSocialMedia(id: String!, socials: SocialsInput): User
     onboarding(email: String, feedPreferences: FeedPreferencesInput, teams: [TeamInput]): User
   }
 `;
