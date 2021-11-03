@@ -11,7 +11,7 @@ interface OnboardingInput {
 
 interface SocialInput {
   socials: Socials,
-  id: string,
+  firebaseUid: string,
 }
 
 export default {
@@ -27,9 +27,9 @@ export default {
   },
 
   updateSocialMedia: async (_1: any, context: SocialInput) => {
-    const { id, socials } = context;
+    const { firebaseUid, socials } = context;
     return await userModel.findOneAndUpdate(
-      { id },
+      { firebaseUid },
       { socials },
       { returnOriginal: false }
     )
