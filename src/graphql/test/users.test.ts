@@ -225,11 +225,25 @@ describe('Users graphql', () => {
       it('updates the existing user', async () => {
         const newUser = await userModel.create(user);
         const UPDATE_SOCIAL = `
-          mutation updateSocialMedia($firebaseUid: String!, $socials: SocialsInput) {
+          mutation updateSocialMedia($firebaseUid: String!, $socials: SocialsInput!) {
             updateSocialMedia(firebaseUid: $firebaseUid, socials: $socials) {
               firebaseUid
               socials {
-                youtube
+                youtube {
+                  channelId
+                }
+                spotify {
+                  podcasts {
+                    name
+                    description
+                    image {
+                      url
+                      width
+                      heigth
+                    }
+                    id
+                  }
+                }
               }
             }
           }
@@ -237,7 +251,7 @@ describe('Users graphql', () => {
 
         const expectedUser = {
           firebaseUid: newUser.firebaseUid,
-          socials: socialsMock.socials
+          socials: socialsMock.socials,
         };
 
         const result = await apolloServer.executeOperation({

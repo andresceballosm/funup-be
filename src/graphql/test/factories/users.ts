@@ -11,8 +11,24 @@ export const user = {
 
 export const socialsMock = {
   socials: {
-    youtube: 'https://gdata.youtube.com/feeds/api/users/UC_x5XG1OV2P6uZZ5FSM9Ttw?v=2.1'
-  }
+    youtube: {
+      channelId: 'https://gdata.youtube.com/feeds/api/users/UC_x5XG1OV2P6uZZ5FSM9Ttw?v=2.1',
+    },
+    spotify: {
+      podcasts: [
+        {
+          name: 'Podcast Test',
+          description: 'description test',
+          image: {
+            url: 'http://google.com',
+            width: 48,
+            heigth: 48,
+          },
+          id: 'id123123',
+        },
+      ],
+    },
+  },
 };
 
 export const onboardingMock = {
