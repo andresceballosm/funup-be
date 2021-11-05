@@ -14,6 +14,11 @@ interface SocialInput {
   firebaseUid: string,
 }
 
+interface TeamInput {
+  teams: SmallTeam[];
+  firebaseUid: string,
+}
+
 export default {
   signup: async (_1: any, context: UserDocument) =>
     await userModel.create(context),
@@ -31,6 +36,15 @@ export default {
     return await userModel.findOneAndUpdate(
       { firebaseUid },
       { socials },
+      { returnOriginal: false }
+    )
+  },
+
+  updateTeams: async (_1: any, context: TeamInput) => {
+    const { firebaseUid, teams } = context;
+    return await userModel.findOneAndUpdate(
+      { firebaseUid },
+      { teams },
       { returnOriginal: false }
     )
   },

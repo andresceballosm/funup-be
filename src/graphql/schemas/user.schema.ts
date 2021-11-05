@@ -28,6 +28,8 @@ const teamProps = `
   league: String!
   sportRadarId: String!
   sportsManiaId: String!
+  logo: String!
+  abbreviation: String!
 `;
 
 export const userSchema = gql`
@@ -98,6 +100,7 @@ export const userSchema = gql`
     signup(name: String, email: String!, firebaseUid: String!, photo: String): User
     updateProfile(id: String!, name: String, email: String, bio: String, photo: String): User
     updateSocialMedia(firebaseUid: String!, socials: SocialsInput!): User
+    updateTeams(firebaseUid: String!, teams: [TeamInput]): User
     onboarding(email: String, feedPreferences: FeedPreferencesInput, teams: [TeamInput]): User
   }
 `;

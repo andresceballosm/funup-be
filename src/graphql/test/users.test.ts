@@ -317,6 +317,8 @@ describe('Users graphql', () => {
                 league
                 sportRadarId
                 sportsManiaId
+                logo
+                abbreviation
               }
               onboardingCompleted
             }

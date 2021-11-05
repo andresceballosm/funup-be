@@ -44,12 +44,16 @@ export const onboardingMock = {
       league: 'NBA',
       sportRadarId: 'sportRadarTestid1',
       sportsManiaId: 'sportsmaniaTestId2',
+      logo: 'logo',
+      abbreviation: 'CHI'
     },
     {
       name: 'Miami Heat',
       league: 'NBA',
       sportRadarId: 'sportRadarTestid2',
       sportsManiaId: 'sportsmaniaTestId3',
+      logo: 'logo',
+      abbreviation: 'MIA'
     },
   ],
 };
