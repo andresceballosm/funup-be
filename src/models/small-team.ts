@@ -5,6 +5,8 @@ export interface SmallTeam {
   league: string;
   sportRadarId: string;
   sportsManiaId: string;
+  logo: string;
+  abbreviation: string
 }
 
 export const smallTeamSchema = new Schema({
@@ -12,4 +14,6 @@ export const smallTeamSchema = new Schema({
   league: String,
   sportRadarId: String,
   sportsManiaId: String,
+  logo: String,
+  abbreviation: String
 });

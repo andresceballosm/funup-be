@@ -10,6 +10,7 @@ import typeDefs from '../graphql/schemas';
 
 //CONSTANTS
 import pathURL from '../constants/path.constants';
+import spotifyRouter from '../modules/spotify.module';
 
 const path = require('path');
 
@@ -47,6 +48,7 @@ class Server {
     this.app.use(express.json());
     //Static files
     this.app.use(express.static(path.join(__dirname, 'public')));
+    this.app.use(express.urlencoded({ extended: false }));
   }
 
   createApolloServer() {
@@ -62,6 +64,7 @@ class Server {
     await this.server.start();
     const app = this.app;
     this.app.get(pathURL.health, (_, res: any) => res.status(200).json({ status: 'success' }));
+    this.app.use(pathURL.spotify, spotifyRouter);
     this.server.applyMiddleware({ app, path: pathURL.graphql });
   }
 

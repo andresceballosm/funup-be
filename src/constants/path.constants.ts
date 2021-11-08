@@ -1,5 +1,6 @@
 export default {
     base: '/',
     graphql: '/graphql',
-    health: '/health'
+    health: '/health',
+    spotify: '/spotify',
 };

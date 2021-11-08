@@ -1,6 +1,6 @@
 import Server from '../../models/server.model';
 import { userModel } from '../../models/user.model';
-import { onboardingMock, user } from './factories/users';
+import { onboardingMock, socialsMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
 
 describe('Users graphql', () => {
@@ -199,6 +199,77 @@ describe('Users graphql', () => {
     });
   });
 
+  describe('updateSocials', () => {
+    describe('when an invalid object is given', () => {
+      it('returns a validation error', async () => {
+        const UPDATE_SOCIAL = `
+        mutation {
+            updateSocialMedia(randomName: "${user.name}") {
+              name
+            }
+        }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_SOCIAL,
+          variables: { randomName: user.name },
+        });
+
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Unknown argument "randomName" on field "Mutation.updateSocialMedia".'
+        );
+      });
+    });
+
+    describe('when a valid object is given', () => {
+      it('updates the existing user', async () => {
+        const newUser = await userModel.create(user);
+        const UPDATE_SOCIAL = `
+          mutation updateSocialMedia($firebaseUid: String!, $socials: SocialsInput!) {
+            updateSocialMedia(firebaseUid: $firebaseUid, socials: $socials) {
+              firebaseUid
+              socials {
+                youtube {
+                  channelId
+                }
+                spotify {
+                  podcasts {
+                    name
+                    description
+                    image {
+                      url
+                      width
+                      heigth
+                    }
+                    id
+                  }
+                }
+              }
+            }
+          }
+        `;
+
+        const expectedUser = {
+          firebaseUid: newUser.firebaseUid,
+          socials: socialsMock.socials,
+        };
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_SOCIAL,
+          variables: {
+            firebaseUid: newUser.firebaseUid,
+            socials: socialsMock.socials,
+          },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.updateSocialMedia)).toEqual(
+          JSON.stringify({ ...expectedUser })
+        );
+      });
+    });
+  });
+
   describe('onboarding', () => {
     describe('when an invalid object is given', () => {
       it('returns a validation error', async () => {
@@ -246,6 +317,8 @@ describe('Users graphql', () => {
                 league
                 sportRadarId
                 sportsManiaId
+                logo
+                abbreviation
               }
               onboardingCompleted
             }
