@@ -7,6 +7,7 @@ export interface UserInput {
   name: string;
   email: string;
   photo: string;
+  banner: string;
   bio: string;
   active: string;
   socials: Socials;
@@ -38,6 +39,7 @@ const userSchema = new Schema(
     },
     bio: String,
     photo: String,
+    banner: String,
     onboardingCompleted: {
       type: Boolean,
       default: false,
