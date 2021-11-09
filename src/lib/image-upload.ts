@@ -19,11 +19,12 @@
   
     // Configure AWS with your access and secret key.
     const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET } = process.env;
+    AWS.config.update({ region: AWS_REGION });
+
     if (process.env.NODE_ENV === 'local') {
       AWS.config.update({
         accessKeyId: AWS_ACCESS_KEY_ID,
-        secretAccessKey: AWS_SECRET_ACCESS_KEY,
-        region: AWS_REGION
+        secretAccessKey: AWS_SECRET_ACCESS_KEY
       });
     }
 
@@ -48,13 +49,12 @@
     // To prevent this, use a different Key each time.
     // This won't be needed if they're uploading their avatar, hence the filename, userAvatar.js.
     const params = {
+      Bucket: AWS_S3_BUCKET,
       Key: `${uniqueFileName}.${type}`, // type is not required
       Body: base64Data,
       ContentEncoding: 'base64', // required
       ContentType: `image/${type}` // required. Notice the back ticks
     }
-
-    if (process.env.NODE_ENV === 'local') { Object.assign(params, { Bucket: AWS_S3_BUCKET }); }
 
     if (process.env.NODE_ENV === 'test') {
       const publicPath = path.join(__dirname, '../public/');
