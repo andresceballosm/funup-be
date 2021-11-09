@@ -88,6 +88,8 @@ export const userSchema = gql`
     bio: String
     socials: Socials
     firebaseUid: String
+    photo: String
+    banner: String
     onboardingCompleted: Boolean
     feedPreferences: FeedPreferences
     teams: [SmallTeam]
@@ -98,7 +100,8 @@ export const userSchema = gql`
   }
   extend type Mutation {
     signup(name: String, email: String!, firebaseUid: String!, photo: String): User
-    updateProfile(id: String!, name: String, email: String, bio: String, photo: String): User
+    updateSocialMedia(firebaseUid: String!, socials: SocialsInput): User
+    updateProfile(firebaseUid: String!, name: String, email: String, bio: String, userPhoto: String, bannerPhoto: String): User
     updateSocialMedia(firebaseUid: String!, socials: SocialsInput!): User
     updateTeams(firebaseUid: String!, teams: [TeamInput]): User
     onboarding(email: String, feedPreferences: FeedPreferencesInput, teams: [TeamInput]): User

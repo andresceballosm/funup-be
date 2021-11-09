@@ -2,6 +2,9 @@ import Server from '../../models/server.model';
 import { userModel } from '../../models/user.model';
 import { onboardingMock, socialsMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
+const fetch64 = require('fetch-base64');
+import path from 'path';
+const fsExtra = require('fs-extra');
 
 describe('Users graphql', () => {
   let server: Server;
@@ -10,13 +13,18 @@ describe('Users graphql', () => {
   beforeAll(() => {
     server = new Server();
     apolloServer = server.createApolloServer();
+    server.listen();
   });
 
   afterEach(async () => {
     await userModel.deleteMany({});
   });
 
-  afterAll(() => server.stopServer());
+  afterAll(() => {
+    server.stopServer();
+    const publicPath = path.join(__dirname, '../../public/');
+    fsExtra.emptyDirSync(publicPath);
+  });
 
   describe('user', () => {
     describe('when an invalid user id is give', () => {
@@ -172,7 +180,7 @@ describe('Users graphql', () => {
         const newUser = await userModel.create(user);
         const UPDATE_PROFILE = `
         mutation {
-            updateProfile(id: "${newUser.id}", bio: "Welcome to my profile") {
+            updateProfile(firebaseUid: "${newUser.firebaseUid}", bio: "Welcome to my profile") {
               name
               email
               bio
@@ -195,6 +203,33 @@ describe('Users graphql', () => {
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
+      });
+    });
+
+    describe('when a photo is given', () => {
+      it('uploads the photo', async () => {
+        const newUser = await userModel.create(user);
+        const base64Image = await fetch64.local(path.join(__dirname, './assets/meme.jpeg'));
+
+        const UPDATE_PROFILE = `
+          mutation updateProfile($firebaseUid: String!, $userPhoto: String) {
+            updateProfile(firebaseUid: $firebaseUid, userPhoto: $userPhoto) {
+              name
+              photo
+            }
+          }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: UPDATE_PROFILE,
+          variables: {
+            firebaseUid: newUser.firebaseUid,
+            userPhoto: base64Image[0]
+          },
+        });
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.updateProfile.photo)).toBeDefined();
       });
     });
   });

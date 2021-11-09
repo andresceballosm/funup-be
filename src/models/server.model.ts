@@ -45,10 +45,10 @@ class Server {
   async middlewares() {
     this.startServer();
     this.app.use(cors());
-    this.app.use(express.json());
+    this.app.use(express.json({limit: '50mb'}));
     //Static files
     this.app.use(express.static(path.join(__dirname, 'public')));
-    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(express.urlencoded({ extended: false, limit: '50mb' }));
   }
 
   createApolloServer() {
