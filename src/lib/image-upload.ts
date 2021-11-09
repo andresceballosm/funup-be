@@ -73,7 +73,7 @@
       location = Location;
       key = Key;
     } catch (error) {
-       // console.log(error)
+      console.log(error)
     }
     
     // Save the Location (url) to your database and Key if needs be.
