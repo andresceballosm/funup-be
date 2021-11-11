@@ -14,6 +14,10 @@ export const socialsMock = {
     youtube: {
       channelId: 'https://gdata.youtube.com/feeds/api/users/UC_x5XG1OV2P6uZZ5FSM9Ttw?v=2.1',
     },
+    twitter: {
+      userID:"123456",
+      userName:"twitterUser"
+    },
     spotify: {
       podcasts: [
         {

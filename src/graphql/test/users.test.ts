@@ -267,6 +267,10 @@ describe('Users graphql', () => {
                 youtube {
                   channelId
                 }
+                twitter {
+                  userID
+                  userName
+                }
                 spotify {
                   podcasts {
                     name
