@@ -14,6 +14,10 @@ export interface Socials {
   youtube: {
     channelId: string;
   };
+  twitter: {
+    userID: string;
+    userName: string;
+  };
   spotify: {
     refreshToken: string;
     podcasts: Podcast[];
@@ -24,6 +28,13 @@ export const socialsSchema = new Schema({
   youtube: {
     type: {
       channelId: String,
+    },
+    default: null,
+  },
+  twitter: {
+    type: {
+      userID: String,
+      userName: String,
     },
     default: null,
   },

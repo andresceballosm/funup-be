@@ -4,6 +4,11 @@ const youtubeProps = `
   channelId: String
 `;
 
+const twitterProps = `
+  userID: String
+  userName: String
+`;
+
 const spotifyPodcastProps = `
   id: String
   description: String
@@ -73,13 +78,21 @@ export const userSchema = gql`
     podcasts: [SpotifyPodcast]
     refreshToken: String
   }
+  input TwitterLinkInput {
+    ${twitterProps}
+  }
+  type TwitterLink {
+    ${twitterProps}
+  }
   input SocialsInput {
     youtube: YoutubeLinkInput
     spotify: SpotifyLinkInput
+    twitter: TwitterLinkInput
   }
   type Socials {
     youtube: YoutubeLink
     spotify: SpotifyLink
+    twitter: TwitterLink
   }
   type User {
     id: String
