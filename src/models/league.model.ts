@@ -17,6 +17,7 @@ export interface LeagueDocument extends Document {
 }
 
 const teamSchema = new Schema({
+  sportRadarId: String,
   name: String,
   country: String,
   countryCode: String,

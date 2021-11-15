@@ -21,33 +21,35 @@ describe('Leagues graphql', () => {
     server.stopServer();
   });
 
-  describe('league', () => {
-    describe('when leagues query is called', () => {
-      it('returns the leagues in db', async () => {
-        await leagueModel.create(league);
-        const GET_LEAGUES = `
-        {
-            leagues {
-                name
-                logo
-                teams {
+  describe('Leagues graphql', () => {
+    describe('leagues', () => {
+      describe('when leagues query is called', () => {
+        it('returns the leagues in db', async () => {
+          await leagueModel.create(league);
+          const GET_LEAGUES = `
+          {
+              leagues {
                   name
-                  country
-                  countryCode
-                  abbreviation
-                  state
                   logo
-                  coverImage
-                }
-            }
-        }
-        `;
+                  teams {
+                    name
+                    country
+                    countryCode
+                    abbreviation
+                    state
+                    logo
+                    coverImage
+                  }
+              }
+          }
+          `;
 
-        const result = await apolloServer.executeOperation({ query: GET_LEAGUES });
+          const result = await apolloServer.executeOperation({ query: GET_LEAGUES });
 
-        expect(result.errors).toBeUndefined();
-        expect(result.data?.leagues[0].name).toBe(league.name);
-        expect(result.data?.leagues[0].teams.length).toBe(league.teams.length);
+          expect(result.errors).toBeUndefined();
+          expect(result.data?.leagues[0].name).toBe(league.name);
+          expect(result.data?.leagues[0].teams.length).toBe(league.teams.length);
+        });
       });
     });
   });

@@ -274,3 +274,203 @@ export const league = {
     },
   ],
 };
+
+export const nbaLeagues = {
+  data: {
+    generated_at: '2021-11-15T15:22:26+00:00',
+    season: {
+      id: 'sr:season:85502',
+      name: 'NBA 21/22',
+      start_date: '2021-10-19',
+      end_date: '2022-06-19',
+      year: '21/22',
+      competition_id: 'sr:competition:132',
+      sport: {},
+      category: {
+        id: 'sr:category:15',
+        name: 'USA',
+        country_code: 'USA'
+      },
+      competition: {
+        id: 'sr:competition:132',
+        name: 'NBA',
+        gender: 'men'
+      }
+    },
+
+    stages: [
+      {
+        order: 1,
+        type: 'league',
+        phase: 'regular season',
+        start_date: '2021-09-09',
+        end_date: '2022-02-13',
+        year: '2021',
+        groups: [
+          {
+            id: 'sr:league:56394',
+            name: 'NFL',
+            competitors: [
+              {
+                id:'sr:competitor:3433',
+                name:'Toronto Raptors',
+                country:'USA',
+                country_code:'USA',
+                abbreviation:'TOR',
+                state:'NC'
+              },
+              {
+                id:'sr:competitor:3430',
+                name:'Charlotte Hornets',
+                country:'USA',
+                country_code:'USA',
+                abbreviation:'CHA',
+                state:'NC'
+              }
+            ],
+          }
+        ]
+      }
+    ]
+  }
+};
+
+export const nflLeagues = {
+  id: '3c6d318a-6164-4290-9bbc-bf9bb21cc4b8',
+  name: 'National Football League',
+  alias: 'NFL',
+  conferences: [
+    {
+      id: '1bdefe12-6cb2-4d6a-b208-b04602ae79c3',
+      name: 'AFC',
+      alias: 'AFC',
+      divisions: [
+        {
+          id: '324decdd-aa1b-4074-8958-c009d8fac31a',
+          name: 'AFC West',
+          alias: 'AFC_WEST',
+          teams: [
+          {  
+            id: 'ce92bd47-93d5-4fe9-ada4-0fc681e6caa0',
+            name: 'Broncos',
+            market: 'Denver',
+            alias: 'DEN',
+            sr_id: 'sr:competitor:4418',
+            references: [],
+            venue: {
+              id: '6589e61d-ef1e-4e30-91b5-9acd2072b8a0',
+              name: 'Empower Field at Mile High',
+              city: 'Denver',
+              state: 'CO',
+              country: 'USA',
+              zip: '80204',
+              address: '1701 Mile High Stadium Circle',
+              capacity: 76125,
+              surface: 'turf',
+              roof_type: 'outdoor',
+              sr_id: 'sr:venue:8179',
+              location: {
+              lat: '39.743865',
+              lng: '-105.020158'
+            }
+          },
+          franchise: {
+              id: '32e2db10-be6d-41ed-9e3d-5b30ba164b99',
+              name: 'Broncos',
+              alias: 'DEN'
+          },
+          team_colors: [
+            {
+              type: 'secondary',
+              hex_color: '#002244',
+              alpha: 0,
+              rgb_color: {
+                red: 0,
+                green: 34,
+                blue: 68
+              }
+            },
+            {
+              type: 'primary',
+              hex_color: '#fb4f14',
+              alpha: 0,
+              rgb_color: {
+                red: 251,
+                green: 79,
+                blue: 20
+              }
+            }
+          ]
+          }
+          ]
+        }
+      ],
+    },
+    {
+      id: '1bdefe12-6cb2-4d6a-b208-b04602ae79c3',
+      name: 'AFC',
+      alias: 'AFC',
+      divisions: [
+        {
+          id: '324decdd-aa1b-4074-8958-c009d8fac31a',
+          name: 'AFC West',
+          alias: 'AFC_WEST',
+          teams: [
+          {  
+            id: 'ce92bd47-93d5-4fe9-ada4-0fc681e6caa0',
+            name: 'Broncos',
+            market: 'Denver',
+            alias: 'DEN',
+            sr_id: 'sr:competitor:4418',
+            references: [],
+            venue: {
+              id: '6589e61d-ef1e-4e30-91b5-9acd2072b8a0',
+              name: 'Empower Field at Mile High',
+              city: 'Denver',
+              state: 'CO',
+              country: 'USA',
+              zip: '80204',
+              address: '1701 Mile High Stadium Circle',
+              capacity: 76125,
+              surface: 'turf',
+              roof_type: 'outdoor',
+              sr_id: 'sr:venue:8179',
+              location: {
+              lat: '39.743865',
+              lng: '-105.020158'
+            }
+          },
+          franchise: {
+              id: '32e2db10-be6d-41ed-9e3d-5b30ba164b99',
+              name: 'Broncos',
+              alias: 'DEN'
+          },
+          team_colors: [
+            {
+              type: 'secondary',
+              hex_color: '#002244',
+              alpha: 0,
+              rgb_color: {
+                red: 0,
+                green: 34,
+                blue: 68
+              }
+            },
+            {
+              type: 'primary',
+              hex_color: '#fb4f14',
+              alpha: 0,
+              rgb_color: {
+                red: 251,
+                green: 79,
+                blue: 20
+              }
+            }
+          ]
+          }
+          ]
+        }
+      ],
+    }
+  ]
+};

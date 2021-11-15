@@ -19,4 +19,7 @@ export const leagueSchema = gql`
   extend type Query {
     leagues: [League]
   }
+  extend type Mutation {
+    populateLeagues: ID
+  }
 `;
