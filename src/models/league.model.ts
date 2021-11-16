@@ -1,6 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface TeamDocument extends Document {
+  sportRadarId: string;
   name: string;
   country: string;
   countryCode: string;

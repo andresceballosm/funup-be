@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express';
 
 export const leagueSchema = gql`
   type Team {
+    sportRadarId: String
     id: String
     name: String
     country: String
@@ -18,6 +19,7 @@ export const leagueSchema = gql`
   }
   extend type Query {
     leagues: [League]
+    teamById(leagueName: String!, sportRadarId: String!): Team
   }
   extend type Mutation {
     populateLeagues: ID
