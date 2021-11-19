@@ -16,6 +16,15 @@ export interface UserInput {
   feedPreferences: FeedPreferences;
   teams: SmallTeam[];
 }
+
+export interface FollowedUser {
+  firebaseUid: string;
+}
+
+export const followedUserSchema = new Schema({
+  firebaseUid: String,
+});
+
 export interface UserDocument extends UserInput, Document {
   createdAt: Date;
   updatedAt: Date;
@@ -47,6 +56,7 @@ const userSchema = new Schema(
     socials: socialsSchema,
     feedPreferences: feedPreferencesSchema,
     teams: [smallTeamSchema],
+    followedUsers: [followedUserSchema]
   },
   { timestamps: true }
 );

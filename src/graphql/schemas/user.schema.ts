@@ -89,6 +89,12 @@ export const userSchema = gql`
     spotify: SpotifyLinkInput
     twitter: TwitterLinkInput
   }
+  input FollowedUsersInput {
+    firebaseUid: String
+  }
+  type FollowedUsers {
+    firebaseUid: String
+  }
   type Socials {
     youtube: YoutubeLink
     spotify: SpotifyLink
@@ -106,6 +112,7 @@ export const userSchema = gql`
     onboardingCompleted: Boolean
     feedPreferences: FeedPreferences
     teams: [SmallTeam]
+    followedUsers: [FollowedUsers]
   }
   extend type Query {
     user(id: String!): User
@@ -116,6 +123,7 @@ export const userSchema = gql`
     updateProfile(firebaseUid: String!, name: String, email: String, bio: String, userPhoto: String, bannerPhoto: String): User
     updateSocialMedia(firebaseUid: String!, socials: SocialsInput!): User
     updateTeams(firebaseUid: String!, teams: [TeamInput]): User
+    updateFollowedUsers(firebaseUid: String!, followedUsers: [FollowedUsersInput]): User
     onboarding(email: String, feedPreferences: FeedPreferencesInput, teams: [TeamInput]): User
   }
 `;

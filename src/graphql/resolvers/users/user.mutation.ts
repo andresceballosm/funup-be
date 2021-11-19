@@ -1,7 +1,7 @@
 import { FeedPreferences } from '../../../models/feed-preferences.model';
 import { SmallTeam } from '../../../models/small-team';
 import { Socials } from '../../../models/socials.model';
-import { UserDocument, userModel } from '../../../models/user.model';
+import { FollowedUser, UserDocument, userModel } from '../../../models/user.model';
 const imageUpload = require('../../../lib/image-upload');
 
 interface OnboardingInput {
@@ -29,8 +29,13 @@ interface UserProfileInput {
   teams: [SmallTeam]
 }
 interface TeamInput {
-  teams: SmallTeam[];
-  firebaseUid: string,
+  teams: SmallTeam[]
+  firebaseUid: string
+}
+
+interface FollowedUsersInput {
+  firebaseUid: string
+  followedUsers: FollowedUser[]
 }
 
 export default {
@@ -70,6 +75,15 @@ export default {
     return await userModel.findOneAndUpdate(
       { firebaseUid },
       { teams },
+      { returnOriginal: false }
+    )
+  },
+
+  updateFollowedUsers: async (_1: any, context: FollowedUsersInput) => {
+    const { firebaseUid, followedUsers } = context;
+    return await userModel.findOneAndUpdate(
+      { firebaseUid },
+      { followedUsers },
       { returnOriginal: false }
     )
   },
