@@ -4,6 +4,8 @@ import { onboardingMock, socialsMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
 const fetch64 = require('fetch-base64');
 import path from 'path';
+import { squadModel } from '../../models/squad.model';
+import { squad } from './factories/squads';
 const fsExtra = require('fs-extra');
 
 describe('Users graphql', () => {
@@ -13,7 +15,6 @@ describe('Users graphql', () => {
   beforeAll(() => {
     server = new Server();
     apolloServer = server.createApolloServer();
-    server.listen();
   });
 
   afterEach(async () => {
@@ -27,8 +28,8 @@ describe('Users graphql', () => {
   });
 
   describe('user', () => {
-    describe('when an invalid user id is give', () => {
-      it('it returns an error message', async () => {
+    describe('when an invalid user id is given', () => {
+      it('returns an error message', async () => {
         const GET_USER = `
         {
             user(id: "1") {
@@ -157,11 +158,11 @@ describe('Users graphql', () => {
     describe('when an invalid object is given', () => {
       it('returns a validation error', async () => {
         const UPDATE_PROFILE = `
-        mutation {
-            updateProfile(randomName: "${user.name}") {
+          mutation updateProfile($randomName: String) {
+            updateProfile(randomName: $randomName) {
               name
             }
-        }
+          }
         `;
 
         const result = await apolloServer.executeOperation({
@@ -178,31 +179,36 @@ describe('Users graphql', () => {
     describe('when a valid object is given', () => {
       it('updates the existing user', async () => {
         const newUser = await userModel.create(user);
+        await squadModel.create(squad);
         const UPDATE_PROFILE = `
-        mutation {
-            updateProfile(firebaseUid: "${newUser.firebaseUid}", bio: "Welcome to my profile") {
+          mutation updateProfile($firebaseUid: String!, $name: String) {
+            updateProfile(firebaseUid: $firebaseUid, name: $name) {
               name
               email
-              bio
               onboardingCompleted
             }
-        }
+          }
         `;
 
         const result = await apolloServer.executeOperation({
           query: UPDATE_PROFILE,
-          variables: { bio: 'Welcome to my profile' },
+          variables: {
+            firebaseUid: newUser.firebaseUid,
+            name: 'Georgio'
+          },
         });
 
         const expectedUser = {
-          name: user.name,
+          name: 'Georgio',
           email: user.email,
-          bio: 'Welcome to my profile',
           onboardingCompleted: true,
         };
 
+        const updatedSquadMember = await squadModel.find({ 'members.firebaseUid': newUser.firebaseUid });
+
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
+        expect(updatedSquadMember[0].members[0].name).toEqual(expectedUser.name);
       });
     });
 

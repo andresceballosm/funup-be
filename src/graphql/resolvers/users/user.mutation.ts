@@ -1,6 +1,7 @@
 import { FeedPreferences } from '../../../models/feed-preferences.model';
 import { SmallTeam } from '../../../models/small-team';
 import { Socials } from '../../../models/socials.model';
+import { squadModel } from '../../../models/squad.model';
 import { FollowedUser, UserDocument, userModel } from '../../../models/user.model';
 const imageUpload = require('../../../lib/image-upload');
 
@@ -53,6 +54,15 @@ export default {
       feedPreferences: context.feedPreferences,
       teams: context.teams
     };
+
+    await squadModel.updateMany(
+      { 'members.firebaseUid': user.firebaseUid },
+      { $set: {
+        'members.$.name': context.name,
+        'members.$.firebaseUid': context.firebaseUid,
+        'members.$.photo': context.photo }
+      }
+    );
 
     return await userModel.findOneAndUpdate(
       { firebaseUid: user.firebaseUid },

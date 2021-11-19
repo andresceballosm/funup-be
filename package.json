@@ -8,7 +8,7 @@
     "start:local": "NODE_ENV=local nodemon app",
     "build": "tsc -p . && ncp src dist",
     "build:dev": "nodemon 'src/models/server.model.ts' --exec 'ts-node' src/models/server.model.ts -e ts, graphql",
-    "test": "jest --config jest.config.json --no-cache",
+    "test": "jest --config jest.config.json --no-cache --detectOpenHandles",
     "lint": "eslint . --ext .js,.ts",
     "prepare": "husky install"
   },

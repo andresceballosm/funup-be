@@ -9,6 +9,11 @@ export const user = {
   createdAt: Date.now(),
 };
 
+export const smallUser = {
+  firebaseUid: user.firebaseUid,
+  name: 'Mr. Testing',
+};
+
 export const socialsMock = {
   socials: {
     youtube: {
