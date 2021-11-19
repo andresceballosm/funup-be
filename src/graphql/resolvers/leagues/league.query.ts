@@ -1,4 +1,5 @@
-import { leagueModel, TeamDocument } from '../../../models/league.model';
+import { getDatabase } from '../../../db';
+import { TeamDocument } from '../../../models/league.model';
 
 interface FindTeamInput {
   leagueName: string;
@@ -6,9 +7,9 @@ interface FindTeamInput {
 }
 
 export default {
-  leagues: async () => await leagueModel.find({}),
-  teamById : async (_: any, context: FindTeamInput) => {
-    const league = await leagueModel.findOne({name: context.leagueName});
-    return league?.teams.find((team : TeamDocument) => team.sportRadarId == context.sportRadarId);
-  }
+  leagues: async () => await getDatabase().leagueModel.find({}),
+  teamById: async (_: any, context: FindTeamInput) => {
+    const league = await getDatabase().leagueModel.findOne({ name: context.leagueName });
+    return league?.teams.find((team: TeamDocument) => team.sportRadarId == context.sportRadarId);
+  },
 };

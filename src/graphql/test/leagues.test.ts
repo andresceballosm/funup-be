@@ -1,7 +1,7 @@
 import Server from '../../models/server.model';
-import { leagueModel } from '../../models/league.model';
 import { league } from './factories/leagues';
 import { ApolloServer } from 'apollo-server-express';
+import { getDatabase } from '../../db';
 
 describe('Leagues graphql', () => {
   let server: Server;
@@ -13,11 +13,11 @@ describe('Leagues graphql', () => {
   });
 
   beforeEach(async () => {
-    await leagueModel.deleteMany({});
+    await getDatabase().leagueModel.deleteMany({});
   });
 
   afterAll(async () => {
-    await leagueModel.deleteMany({});
+    await getDatabase().leagueModel.deleteMany({});
     server.stopServer();
   });
 
@@ -25,7 +25,7 @@ describe('Leagues graphql', () => {
     describe('leagues', () => {
       describe('when leagues query is called', () => {
         it('returns the leagues in db', async () => {
-          await leagueModel.create(league);
+          await getDatabase().leagueModel.create(league);
           const GET_LEAGUES = `
           {
               leagues {

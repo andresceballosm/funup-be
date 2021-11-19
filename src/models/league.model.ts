@@ -1,4 +1,4 @@
-import { model, Schema, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
 export interface TeamDocument extends Document {
   sportRadarId: string;
@@ -28,7 +28,7 @@ const teamSchema = new Schema({
   coverImage: String,
 });
 
-const leagueSchema = new Schema({
+export const leagueSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -36,5 +36,3 @@ const leagueSchema = new Schema({
   logo: String,
   teams: [teamSchema],
 });
-
-export const leagueModel = model<LeagueDocument>('League', leagueSchema);

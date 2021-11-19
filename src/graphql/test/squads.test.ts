@@ -1,10 +1,9 @@
 import Server from '../../models/server.model';
 import { ApolloServer } from 'apollo-server-express';
-import { userModel } from '../../models/user.model';
-import { squadModel } from '../../models/squad.model';
 import { squad } from './factories/squads';
 import { smallUser } from './factories/users';
 import _ from 'lodash';
+import { getDatabase } from '../../db';
 
 describe('Users graphql', () => {
   let server: Server;
@@ -16,8 +15,8 @@ describe('Users graphql', () => {
   });
 
   afterEach(async () => {
-    await userModel.deleteMany({});
-    await squadModel.deleteMany({});
+    await getDatabase().userModel.deleteMany({});
+    await getDatabase().squadModel.deleteMany({});
   });
 
   afterAll(() => {
@@ -27,7 +26,7 @@ describe('Users graphql', () => {
   describe('squads', () => {
     describe('squads', () => {
       it('returns a collection of squads', async () => {
-        const newSquad = await squadModel.create(squad);
+        const newSquad = await getDatabase().squadModel.create(squad);
         const GET_SQUADS = `
           {
             squads {
@@ -58,17 +57,17 @@ describe('Users graphql', () => {
             query: GET_SQUAD,
             variables: { id: '1' },
           });
-  
+
           expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
-              '1 is not a valid ID'
+            '1 is not a valid ID'
           );
           expect(result.data?.squadById).toBeNull();
         });
       });
-      
+
       describe('when a valid squad id is given', () => {
         it('returns the squad by the given id', async () => {
-          const newSquad = await squadModel.create(squad);
+          const newSquad = await getDatabase().squadModel.create(squad);
           const GET_SQUAD = `
           query squadById($id: String!) {
               squadById(id: $id) {
@@ -80,18 +79,18 @@ describe('Users graphql', () => {
               }
           }
           `;
-    
+
           const expectedSquad = {
             name: newSquad.name,
             captain: {
               name: newSquad.captain.name,
-              firebaseUid: newSquad.captain.firebaseUid
-            }
+              firebaseUid: newSquad.captain.firebaseUid,
+            },
           };
-    
+
           const result = await apolloServer.executeOperation({
             query: GET_SQUAD,
-            variables: { id: newSquad.id }
+            variables: { id: newSquad.id },
           });
 
           expect(result.errors).toBeUndefined();
@@ -106,7 +105,7 @@ describe('Users graphql', () => {
       describe('when user is not part of the squad', () => {
         it('adds the user to the given squad', async () => {
           const squadWithNoMembers = _.pick(squad, ['name', 'bio', 'teams', 'captain']);
-          const newSquad = await squadModel.create(squadWithNoMembers);
+          const newSquad = await getDatabase().squadModel.create(squadWithNoMembers);
           const JOIN_SQUAD = `
             mutation joinSquad($id: String!, $member: SmallUserInput!) {
               joinSquad(id: $id, member: $member) {
@@ -122,8 +121,8 @@ describe('Users graphql', () => {
             query: JOIN_SQUAD,
             variables: {
               id: newSquad.id,
-              member: { ...squad.members[0] }
-            }
+              member: { ...squad.members[0] },
+            },
           });
 
           expect(result.errors).toBeUndefined();
@@ -133,7 +132,7 @@ describe('Users graphql', () => {
 
       describe('when user is part of the squad', () => {
         it('does NOT add the user to the given squad', async () => {
-          const newSquad = await squadModel.create(squad);
+          const newSquad = await getDatabase().squadModel.create(squad);
           const JOIN_SQUAD = `
             mutation joinSquad($id: String!, $member: SmallUserInput!) {
               joinSquad(id: $id, member: $member) {
@@ -149,8 +148,8 @@ describe('Users graphql', () => {
             query: JOIN_SQUAD,
             variables: {
               id: newSquad.id,
-              member: { ...squad.members[0] }
-            }
+              member: { ...squad.members[0] },
+            },
           });
 
           expect(result.errors).toBeUndefined();
@@ -161,7 +160,7 @@ describe('Users graphql', () => {
 
     describe('leave', () => {
       it('removes the user of the given squad', async () => {
-        const newSquad = await squadModel.create(squad);
+        const newSquad = await getDatabase().squadModel.create(squad);
         const LEAVE_SQUAD = `
           mutation leaveSquad($id: String!, $member: SmallUserInput!) {
             leaveSquad(id: $id, member: $member) {
@@ -177,8 +176,8 @@ describe('Users graphql', () => {
           query: LEAVE_SQUAD,
           variables: {
             id: newSquad.id,
-            member: { ...squad.members[0] }
-          }
+            member: { ...squad.members[0] },
+          },
         });
 
         expect(result.errors).toBeUndefined();

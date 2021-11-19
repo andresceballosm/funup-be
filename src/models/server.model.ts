@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
-import { connectDB, disconnectDB } from '../db/config';
+import { getDatabase, disconnectDB } from '../db';
 import * as admin from 'firebase-admin';
 
 // Resolvers
@@ -25,11 +25,11 @@ class Server {
     this.startFirebase();
     this.app = express();
     this.port = process.env.PORT || '8000';
+    //Connection DB
+    getDatabase();
     this.server = this.createApolloServer();
     //Headers
     this.headers();
-    //Connection DB
-    connectDB();
     //Middlewares
     this.middlewares();
   }

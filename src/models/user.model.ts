@@ -1,4 +1,4 @@
-import { model, Schema, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 import { FeedPreferences, feedPreferencesSchema } from './feed-preferences.model';
 import { SmallTeam, smallTeamSchema } from './small-team';
 import { Socials, socialsSchema } from './socials.model';
@@ -30,7 +30,7 @@ export interface UserDocument extends UserInput, Document {
   updatedAt: Date;
 }
 
-const userSchema = new Schema(
+export const userSchema = new Schema(
   {
     name: String,
     email: {
@@ -60,5 +60,3 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
-export const userModel = model<UserDocument>('User', userSchema);

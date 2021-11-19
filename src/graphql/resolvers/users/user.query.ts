@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { UserInputError } from 'apollo-server-errors';
-import { UserDocument, userModel } from '../../../models/user.model';
+import { UserDocument } from '../../../models/user.model';
+import { getDatabase } from '../../../db';
 
 export default {
   user: async (root: any, context: UserDocument) => {
@@ -9,9 +10,9 @@ export default {
       throw new UserInputError(`${context.id} is not a valid user ID`);
     }
 
-    return await userModel.findOne({ _id: context.id });
+    return await getDatabase().userModel.findOne({ _id: context.id });
   },
 
   userByFirebaseUid: async (_: any, context: UserDocument) =>
-    await userModel.findOne({ firebaseUid: context.firebaseUid }),
+    await getDatabase().userModel.findOne({ firebaseUid: context.firebaseUid }),
 };

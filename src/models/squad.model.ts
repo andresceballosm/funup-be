@@ -1,4 +1,4 @@
-import { model, Schema, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 import { SmallTeam, smallTeamSchema } from './small-team';
 import { SmallUser, smallUserSchema } from './small-user';
 
@@ -16,7 +16,7 @@ export interface SquadDocument extends SquadInput, Document {
   updatedAt: Date;
 }
 
-const squadSchema = new Schema(
+export const squadSchema = new Schema(
   {
     name: String,
     bio: String,
@@ -24,9 +24,7 @@ const squadSchema = new Schema(
     banner: String,
     teams: [smallTeamSchema],
     captain: smallUserSchema,
-    members: [smallUserSchema]
+    members: [smallUserSchema],
   },
   { timestamps: true }
 );
-
-export const squadModel = model<SquadDocument>('Squad', squadSchema);

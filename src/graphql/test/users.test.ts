@@ -1,11 +1,10 @@
 import Server from '../../models/server.model';
-import { userModel } from '../../models/user.model';
 import { onboardingMock, socialsMock, user } from './factories/users';
 import { ApolloServer } from 'apollo-server-express';
 const fetch64 = require('fetch-base64');
 import path from 'path';
-import { squadModel } from '../../models/squad.model';
 import { squad } from './factories/squads';
+import { getDatabase } from '../../db';
 const fsExtra = require('fs-extra');
 
 describe('Users graphql', () => {
@@ -18,7 +17,7 @@ describe('Users graphql', () => {
   });
 
   afterEach(async () => {
-    await userModel.deleteMany({});
+    await getDatabase().userModel.deleteMany({});
   });
 
   afterAll(() => {
@@ -52,7 +51,7 @@ describe('Users graphql', () => {
 
     describe('when a valid user id is given', () => {
       it('returns the user object', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         const GET_USER = `
         {
             user(id: "${newUser._id}") {
@@ -96,7 +95,7 @@ describe('Users graphql', () => {
 
     describe('when an valid user firebaseUid is given', () => {
       it('returns the user object', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         const result = await apolloServer.executeOperation({
           query: GET_USER_BY_FIREBASEUID,
           variables: { firebaseUid: user.firebaseUid },
@@ -178,8 +177,8 @@ describe('Users graphql', () => {
 
     describe('when a valid object is given', () => {
       it('updates the existing user', async () => {
-        const newUser = await userModel.create(user);
-        await squadModel.create(squad);
+        const newUser = await getDatabase().userModel.create(user);
+        await getDatabase().squadModel.create(squad);
         const UPDATE_PROFILE = `
           mutation updateProfile($firebaseUid: String!, $name: String) {
             updateProfile(firebaseUid: $firebaseUid, name: $name) {
@@ -194,7 +193,7 @@ describe('Users graphql', () => {
           query: UPDATE_PROFILE,
           variables: {
             firebaseUid: newUser.firebaseUid,
-            name: 'Georgio'
+            name: 'Georgio',
           },
         });
 
@@ -204,7 +203,9 @@ describe('Users graphql', () => {
           onboardingCompleted: true,
         };
 
-        const updatedSquadMember = await squadModel.find({ 'members.firebaseUid': newUser.firebaseUid });
+        const updatedSquadMember = await getDatabase().squadModel.find({
+          'members.firebaseUid': newUser.firebaseUid,
+        });
 
         expect(result.errors).toBeUndefined();
         expect(JSON.stringify(result.data?.updateProfile)).toEqual(JSON.stringify(expectedUser));
@@ -214,7 +215,7 @@ describe('Users graphql', () => {
 
     describe('when a photo is given', () => {
       it('uploads the photo', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         const base64Image = await fetch64.local(path.join(__dirname, './assets/meme.jpeg'));
 
         const UPDATE_PROFILE = `
@@ -230,7 +231,7 @@ describe('Users graphql', () => {
           query: UPDATE_PROFILE,
           variables: {
             firebaseUid: newUser.firebaseUid,
-            userPhoto: base64Image[0]
+            userPhoto: base64Image[0],
           },
         });
 
@@ -264,7 +265,7 @@ describe('Users graphql', () => {
 
     describe('when a valid object is given', () => {
       it('updates the existing user', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         const UPDATE_SOCIAL = `
           mutation updateSocialMedia($firebaseUid: String!, $socials: SocialsInput!) {
             updateSocialMedia(firebaseUid: $firebaseUid, socials: $socials) {
@@ -339,14 +340,14 @@ describe('Users graphql', () => {
 
     describe('when a user is created', () => {
       it('has onboardingComplete in false', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         expect(newUser.onboardingCompleted).toBe(false);
       });
     });
 
     describe('when a valid object is given', () => {
       it('updates the existing user', async () => {
-        const newUser = await userModel.create(user);
+        const newUser = await getDatabase().userModel.create(user);
         const ONBOARDING = `
         mutation onboarding($email: String!, $feedPreferences: FeedPreferencesInput!, $teams: [TeamInput]!){
             onboarding(email: $email, feedPreferences: $feedPreferences, teams: $teams) {
