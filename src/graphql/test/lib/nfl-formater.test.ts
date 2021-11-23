@@ -12,7 +12,7 @@ describe('NflFormatter', () => {
         [
           {
             sportRadarId: 'ce92bd47-93d5-4fe9-ada4-0fc681e6caa0',
-            name: 'Broncos',
+            name: 'Denver Broncos',
             country: 'USA',
             abbreviation: 'DEN',
             state: 'CO',
@@ -21,7 +21,7 @@ describe('NflFormatter', () => {
           },
           {
             sportRadarId: 'ce92bd47-93d5-4fe9-ada4-0fc681e6caa0',
-            name: 'Broncos',
+            name: 'Denver Broncos',
             country: 'USA',
             abbreviation: 'DEN',
             state: 'CO',

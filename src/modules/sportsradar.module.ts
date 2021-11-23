@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { LeagueFormatter } from '../lib/formatters/league-formatter';
+import { NbaFormatter } from '../lib/formatters/nba-formatter';
 import { NflFormatter } from '../lib/formatters/nfl-formatter';
+import { NcaamFormatter } from '../lib/formatters/ncaam-formatter';
 import { LeagueDocument } from '../models/league.model';
-
 export interface SportsRadar {
   getLastSeasonId(seasons:any):string
   getSeasons():any
-  getLeagues():Promise<LeagueDocument>
+  getNbaLeagues():Promise<LeagueDocument>
   getNflLeagues():Promise<any>
 }
 
@@ -16,10 +16,10 @@ export class SportsRadar implements SportsRadar {
   private sportsRadarEndpoint: string;
 
   constructor(competitionId: string, apiKey: string, sport: string) {
-    if (!apiKey) {
+    if (!apiKey || apiKey.length === 0) {
       throw new Error('No SPORTS_RADAR_API_KEY provided');
     }
-    this.sportsRadarEndpoint = `http://api.sportradar.us/${sport}/trial/v2/en`;
+    this.sportsRadarEndpoint = `http://api.sportradar.us/${sport}`;
     this.apiKey = apiKey;
     this.competitionId = competitionId;
   }
@@ -29,21 +29,26 @@ export class SportsRadar implements SportsRadar {
   }
 
   async getSeasons() {
-    return await axios.get(`${this.sportsRadarEndpoint}/competitions/${this.competitionId}/seasons.json?api_key=${this.apiKey}`);
+    return await axios.get(`${this.sportsRadarEndpoint}/trial/v2/en/competitions/${this.competitionId}/seasons.json?api_key=${this.apiKey}`);
   }
 
-  async getLeagues():Promise<LeagueDocument> {
+  async getNbaLeagues():Promise<LeagueDocument> {
     await this.sleep(1100);
     const seasonId = this.getLastSeasonId(await this.getSeasons());
     await this.sleep(1100);
-    const nflLeagues = await axios.get(`${this.sportsRadarEndpoint}/seasons/${seasonId}/info.json?api_key=${this.apiKey}`);
+    const nflLeagues = await axios.get(`${this.sportsRadarEndpoint}/trial/v2/en/seasons/${seasonId}/info.json?api_key=${this.apiKey}`);
 
-    return await new LeagueFormatter(nflLeagues.data).getTeams();
+    return await new NbaFormatter(nflLeagues.data).getTeams();
   }
 
   async getNflLeagues():Promise<any> {
-    const nflLeagues = await axios.get(`http://api.sportradar.us/nfl/official/trial/v6/en/league/hierarchy.json?api_key=${this.apiKey}`);
+    const nflLeagues = await axios.get(`${this.sportsRadarEndpoint}/official/trial/v6/en/league/hierarchy.json?api_key=${this.apiKey}`);
     return await new NflFormatter(nflLeagues.data.conferences).getTeams();
+  }
+
+  async getNacaaLeagues():Promise<any> {
+    const ncaamLeagues = await axios.get(`${this.sportsRadarEndpoint}/trial/v7/en/league/hierarchy.json?api_key=${this.apiKey}`);
+    return await new NcaamFormatter(ncaamLeagues.data).getTeams();
   }
 
   private sleep(seconds:any) {

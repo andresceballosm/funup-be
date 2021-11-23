@@ -1,11 +1,11 @@
-import { LeagueFormatter } from "../../../lib/formatters/league-formatter";
+import { NbaFormatter } from "../../../lib/formatters/nba-formatter";
 import { nbaLeagues } from "../factories/leagues";
 
-describe('LeagueFormatter', () => {
-  const leagueFormatter = new LeagueFormatter(nbaLeagues.data);
+describe('NbaFormatter', () => {
+  const nbaFormatter = new NbaFormatter(nbaLeagues.data);
   describe('getTeams', () => {
     it('returns all the teams', () => {
-      const teams = leagueFormatter.getTeams();
+      const teams = nbaFormatter.getTeams();
 
       expect(teams.length).not.toEqual(0);
       expect(teams).toEqual(

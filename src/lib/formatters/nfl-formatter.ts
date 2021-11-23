@@ -1,9 +1,6 @@
 import _ from 'lodash';
-export interface NflFormatter {
-  getTeams():any;
-}
-
-export class NflFormatter {
+import { FormatterInferface } from './formatter-interface';
+export class NflFormatter implements FormatterInferface {
   private conferences:any;
 
   constructor(conferences:any) {
@@ -16,7 +13,7 @@ export class NflFormatter {
       .map((team:any) => {
       return {
         sportRadarId: team.id,
-        name: team.name,
+        name: `${team.venue.city} ${team.name}`,
         country: team.venue.country,
         abbreviation: team.alias,
         state: team.venue.state,

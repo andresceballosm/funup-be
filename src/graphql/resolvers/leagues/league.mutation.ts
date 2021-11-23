@@ -2,7 +2,6 @@ import { getDatabase } from '../../../db';
 import { SportsRadar } from '../../../modules/sportsradar.module';
 
 export default {
-  // call just one endpoint to populate all the leagues
   populateLeagues: async () => {
     await getDatabase().leagueModel.replaceOne(
       { name: 'NFL' },
@@ -12,8 +11,8 @@ export default {
         teams: await new SportsRadar(
           '',
           process.env.SPORTS_RADAR_NFL_API_KEY || '',
-          ''
-        ).getNflLeagues(),
+          'nfl'
+        ).getNflLeagues()
       },
       { upsert: true }
     );
@@ -24,10 +23,10 @@ export default {
         name: 'NCAAF',
         logo: 'https://s3.amazonaws.com/static.qa.fanalyst.us/leagues/ncaaf.png',
         teams: await new SportsRadar(
-          'sr:competition:31',
+          '',
           process.env.SPORTS_RADAR_AMERICAN_FOOTBAL_API_KEY || '',
-          'americanfootball'
-        ).getLeagues(),
+          'ncaamb'
+        ).getNacaaLeagues()
       },
       { upsert: true }
     );
@@ -41,9 +40,9 @@ export default {
           'sr:competition:132',
           process.env.SPORTS_RADAR_GLOBAL_BASKET_API_KEY || '',
           'basketball'
-        ).getLeagues(),
+        ).getNbaLeagues()
       },
       { upsert: true }
     );
-  },
-};
+  }
+}

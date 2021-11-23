@@ -1,9 +1,7 @@
 import _ from 'lodash';
-export interface LeagueFormatter {
-  getTeams(): any
-}
+import { FormatterInferface } from './formatter-interface';
 
-export class LeagueFormatter {
+export class NbaFormatter implements FormatterInferface {
   private data:any;
 
   constructor(data:any) {
@@ -14,6 +12,7 @@ export class LeagueFormatter {
     const leagueName = this.data.season.competition.name;
     const groups = _.flattenDeep(this.data.stages.map((competitors:any) => competitors.groups));
     const competitors = _.uniqBy(_.flattenDeep(groups.map((group:any) => _.flattenDeep(group.competitors))), 'name');
+
     return competitors.map((competitor:any) => {
       return {
         sportRadarId: competitor.id,
