@@ -125,5 +125,6 @@ export const userSchema = gql`
     updateTeams(firebaseUid: String!, teams: [TeamInput]): User
     updateFollowedUsers(firebaseUid: String!, followedUsers: [FollowedUsersInput]): User
     onboarding(email: String, feedPreferences: FeedPreferencesInput, teams: [TeamInput]): User
+    deleteUser(id: String, firebaseUid: String, email: String): User
   }
 `;

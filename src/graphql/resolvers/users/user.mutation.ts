@@ -109,4 +109,11 @@ export default {
       { returnOriginal: false }
     );
   },
+
+  deleteUser: async (_1: any, context: UserDocument) => {
+    const { id, firebaseUid, email } = context;
+    return await getDatabase().userModel.findOneAndDelete({
+      $or: [{ _id: id }, { firebaseUid }, { email }],
+    });
+  },
 };
