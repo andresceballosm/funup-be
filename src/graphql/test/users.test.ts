@@ -391,4 +391,54 @@ describe('Users graphql', () => {
       });
     });
   });
+
+  describe('deleteUser', () => {
+    describe('when an invalid object is given', () => {
+      it('returns a validation error', async () => {
+        const DELETE_USER = `
+          mutation deleteUser($name: String){
+            deleteUser(name: $name) {
+              email
+            }
+          }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: DELETE_USER,
+          variables: {
+            name: user.name,
+          },
+        });
+
+        expect(JSON.parse(JSON.stringify(result.errors))[0].message).toEqual(
+          'Unknown argument "name" on field "Mutation.deleteUser".'
+        );
+      });
+    });
+
+    describe('when a valid object is given', () => {
+      it('returns the deleted user', async () => {
+        const newUser = await getDatabase().userModel.create(user);
+        const DELETE_USER = `
+          mutation deleteUser($firebaseUid: String){
+            deleteUser(firebaseUid: $firebaseUid) {
+              email
+            }
+          }
+        `;
+
+        const result = await apolloServer.executeOperation({
+          query: DELETE_USER,
+          variables: {
+            firebaseUid: newUser.firebaseUid,
+          },
+        });
+
+        const expectedUser = { email: newUser.email };
+
+        expect(result.errors).toBeUndefined();
+        expect(JSON.stringify(result.data?.deleteUser)).toEqual(JSON.stringify(expectedUser));
+      });
+    });
+  });
 });
