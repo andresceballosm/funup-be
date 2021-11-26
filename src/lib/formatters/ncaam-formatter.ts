@@ -10,7 +10,6 @@ export class NcaamFormatter implements FormatterInferface {
   }
 
   getTeams = () => {
-    const leagueName = this.data.league.name;
     const conferences = _.flattenDeep(this.data.divisions.map((division:any) => division.conferences));
     const teams = _.flattenDeep(conferences.map((conference:any) => conference.teams));
     const teamsMatchingSportMania = teams.filter((team) => sportRadarIdsForNCAAF.includes(team.id));
@@ -22,7 +21,7 @@ export class NcaamFormatter implements FormatterInferface {
           country: team.venue.country,
           abbreviation: team.alias,
           state: team.venue.state,
-          logo: this.getTeamLogo(leagueName),
+          logo: this.getTeamLogo(),
           coverImage: this.getCoverImage()
         }
     }) as any;
@@ -30,8 +29,8 @@ export class NcaamFormatter implements FormatterInferface {
 
   // TODO: do api request using SportsRadarId to get competitor/league logo
   // Make sure to make it generic to be able to be used in the nfl formater as well
-  private getTeamLogo = (leagueName:string) => {
-    return `https://s3.amazonaws.com/static.qa.fanalyst.us/leagues/${leagueName.toLocaleLowerCase()}.png`
+  private getTeamLogo = () => {
+    return 'https://s3.amazonaws.com/static.qa.fanalyst.us/leagues/ncaaf.png'
   }
 
   private getCoverImage = () => {
