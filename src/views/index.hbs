@@ -1,0 +1,54 @@
+<div>
+  <h1 style='color: #301478; margin-left:10px'>Google SignIn</h1>
+  <hr />
+  <script src='https://accounts.google.com/gsi/client' async defer></script>
+  <div
+    id='g_id_onload'
+    data-client_id='289319615123-edefhhol1o7ohkte0etst5cuv3bc3l26.apps.googleusercontent.com'
+    {{! data-login_uri="https://your.domain/your_login_endpoint" }}
+    data-auto_prompt='false'
+    data-callback='handleCredentialResponse'
+  >
+  </div>
+  <div
+    class='g_id_signin'
+    data-type='standard'
+    data-size='large'
+    data-theme='outline'
+    data-text='sign_in_with'
+    data-shape='rectangular'
+    data-logo_alignment='left'
+  >
+  </div>
+  <button id="btn-logout">Logout</button>
+  <script>
+    function handleCredentialResponse(response) { 
+        console.log('id token', response.credential)
+        const body = {
+          id_token: response.credential,
+          role: 'CLIENT_ROLE'
+        }
+        fetch('http://localhost:8000/clients/google', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then((r) => r.json())
+        .then(resp => {
+          console.log('RES', resp) 
+          localStorage.setItem('email', resp.response.user.email)
+        })
+        .catch(console.warn)
+    }
+    const button = document.getElementById('btn-logout');
+    button.onclick = () => {
+      google.accounts.id.disableAutoSelect();
+       google.accounts.id.revoke(localStorage.getItem('email'), done => {
+         localStorage.clear();
+         location.reload()
+       })
+    }
+    //const responsePayload = decodeJwtResponse(response.credential); }
+  </script>
+</div>

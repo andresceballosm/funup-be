@@ -1,62 +1,61 @@
-import { Schema, Document } from 'mongoose';
-import { FeedPreferences, feedPreferencesSchema } from './feed-preferences.model';
-import { SmallTeam, smallTeamSchema } from './small-team';
-import { Socials, socialsSchema } from './socials.model';
+import { Schema, Document, model } from 'mongoose';
+import { USER_ROLES } from '../constants/user.constants';
 
 export interface UserInput {
   name: string;
   email: string;
-  photo: string;
-  banner: string;
-  bio: string;
-  active: string;
-  socials: Socials;
-  firebaseUid: string;
+  img: string;
+  active: boolean;
   onboardingCompleted: boolean;
-  feedPreferences: FeedPreferences;
-  teams: SmallTeam[];
+  google: boolean;
+  password: string;
 }
-
-export interface FollowedUser {
-  firebaseUid: string;
-}
-
-export const followedUserSchema = new Schema({
-  firebaseUid: String,
-});
 
 export interface UserDocument extends UserInput, Document {
   createdAt: Date;
   updatedAt: Date;
 }
 
-export const userSchema = new Schema(
+const UserSchema = new Schema(
   {
-    name: String,
+    name: {
+      type: String,
+      required: [true, 'Missing name'],
+    },
     email: {
       type: String,
       required: [true, 'Missing email'],
       unique: true,
     },
+    password: {
+      type: String,
+      required: [true, 'Missing password'],
+    },
+    img: {
+      type: String,
+      default: ''
+    },
+    role: {
+      type: String,
+      required: true,
+      emun: USER_ROLES,
+    },
     active: {
       type: Boolean,
       default: true,
     },
-    firebaseUid: {
-      type: String,
-      required: [true, 'Missing firebase uid'],
-    },
-    bio: String,
-    photo: String,
-    banner: String,
-    onboardingCompleted: {
+    google: {
       type: Boolean,
       default: false,
     },
-    socials: socialsSchema,
-    feedPreferences: feedPreferencesSchema,
-    teams: [smallTeamSchema],
-    followedUsers: [followedUserSchema]
   },
   { timestamps: true }
 );
+
+UserSchema.methods.toJSON = function () {
+  const { __v, password, _id, ...user } = this.toObject();
+  user.uid = _id;
+  return user;
+};
+
+module.exports = model('User', UserSchema);

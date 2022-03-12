@@ -1,6 +1,8 @@
 export default {
     base: '/',
-    graphql: '/graphql',
+    auth: '/auth',
+    users: '/users',
     health: '/health',
-    spotify: '/spotify',
+    roles: '/roles',
+    clients: '/clients'
 };

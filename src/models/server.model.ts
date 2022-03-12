@@ -1,37 +1,47 @@
 import express, { Application } from 'express';
-import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
-import { getDatabase, disconnectDB } from '../db';
-import * as admin from 'firebase-admin';
 
-// Resolvers
-import resolvers from '../graphql/resolvers';
-import typeDefs from '../graphql/schemas';
+//ROUTES
+import base_routes from '../routes/base.routes';
+import user_routes from '../routes/user.routes';
+import role_routes from '../routes/role.routes';
+import auth_routes from '../routes/auth.routes';
+import client_routes from '../routes/client.routes';
 
 //CONSTANTS
 import pathURL from '../constants/path.constants';
-import spotifyRouter from '../modules/spotify.module';
+
+// DB
+import { connectDB } from '../db/config';
 
 const path = require('path');
+const expbhs  = require('express-handlebars');
 
 class Server {
   private app: Application;
   private port: string;
-  private server: ApolloServer;
+  private apiPaths = pathURL;
 
   constructor() {
-    this.setEnvVariables();
-    //Initialize Firebase before usage
-    this.startFirebase();
     this.app = express();
     this.port = process.env.PORT || '8000';
-    //Connection DB
-    getDatabase();
-    this.server = this.createApolloServer();
+
+    this.setEnvVariables()
+    //Views
+    this.views();
     //Headers
     this.headers();
+    //DB
+    this.dbConnection()
     //Middlewares
     this.middlewares();
+    //Define routes
+    this.routes();
+
+    if (process.env.NODE_ENV !== 'production') {
+      require('dotenv').config();
+    }
+
   }
 
   headers() {
@@ -42,55 +52,45 @@ class Server {
     });
   }
 
-  async middlewares() {
-    this.startServer();
+  async dbConnection() {
+    await connectDB()
+  }
+
+  routes() {
+    this.app.use(this.apiPaths.base, base_routes);
+    this.app.use(this.apiPaths.auth, auth_routes);
+    this.app.use( this.apiPaths.users, user_routes);
+    this.app.use(this.apiPaths.roles, role_routes);
+    this.app.use(this.apiPaths.clients, client_routes);
+  }
+
+  middlewares() {
     this.app.use(cors());
-    this.app.use(express.json({limit: '50mb'}));
+    this.app.use(express.json());
     //Static files
     this.app.use(express.static(path.join(__dirname, 'public')));
-    this.app.use(express.urlencoded({ extended: false, limit: '50mb' }));
   }
 
-  createApolloServer() {
-    const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-    });
-    return server;
-  }
+  views() {
+    this.app.set('views', path.join(__dirname, '../views'));
+    this.app.engine(
+      '.hbs',
+      expbhs({
+        defaultLayout: 'main',
+        layoutsDir: path.join(this.app.get('views'), 'layouts'),
+        partialsDir: path.join(this.app.get('views'), 'partials'),
+        extname: '.hbs',
+      })
+    );
 
-  async startServer() {
-    this.server = this.createApolloServer();
-    await this.server.start();
-    const app = this.app;
-    this.app.get(pathURL.health, (_, res: any) => res.status(200).json({ status: 'success' }));
-    this.app.use(pathURL.spotify, spotifyRouter);
-    this.server.applyMiddleware({ app, path: pathURL.graphql });
-  }
-
-  async stopServer() {
-    await this.server.stop();
-    disconnectDB();
+    this.app.set('view engine', '.hbs');
   }
 
   listen() {
     this.app.listen(this.port, () => {
-      console.log('Server running on port ' + this.port);
+      console.log('Servidor corriendo en puerto ' + this.port);
     });
   }
-
-  startFirebase() {
-    if (process.env.NODE_ENV !== 'test') {
-      const serviceAccount = {
-        credential: admin.credential.applicationDefault(),
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientId: process.env.FIREBASE_CLIENT_ID,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY,
-      };
-      admin.initializeApp(serviceAccount);
-    }
-  }
-
   setEnvVariables() {
     switch (process.env.NODE_ENV) {
       case 'dev': {
